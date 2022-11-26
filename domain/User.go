@@ -1,26 +1,32 @@
 package domain
 
 type User struct {
-	Id        int64
-	Name      string
-	Email     string
-	Cellphone string
-	Password  string
-	Role      string
-	State     bool
+	Id         int64
+	Name       string
+	Email      string
+	Cellphone  string
+	Password   string
+	Role       string
+	State      bool
+	repository RegisterUserRepository
 }
 
-func (u *User) NewUser(name, email, cellphone, password string) *User {
+func NewUser(name, email, cellphone, password, role string) *User {
 	return &User{
 		Name:      name,
 		Email:     email,
 		Cellphone: cellphone,
 		Password:  password,
+		Role:      role,
 	}
 }
 
-func (u *User) Create() bool {
-	return false
+func (u *User) SetRepository(repository RegisterUserRepository) {
+	u.repository = repository
+}
+
+func (u *User) Create() error {
+	return u.repository.CreateUser(*u)
 }
 
 func (u *User) Update() bool {
@@ -28,7 +34,7 @@ func (u *User) Update() bool {
 }
 
 func (u *User) Exists() bool {
-	return false
+	return u.Id > 0
 }
 
 func (u *User) Find(email string) User {
